@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Address Parser with HTMX</h1>
+        <p class="lead">Enter an address in either raw text format or as structured fields. The other fields will update automatically.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Address Form 1</h4>
+            </div>
+            <div class="card-body">
+                {% include 'address_form.html' with form=form1 form_id="form1" %}
+            </div>
+        </div>
+    </div>
+    
+    {% comment %} <!-- Middle Grid Section -->
+    <div class="col-md-2">
+        <div class="card border-0 shadow-none"> <!-- Keep card structure but remove borders -->
+            <div class="card-header bg-info border-0 text-center">
+                <h4 class="mb-0">Score</h4>
+            </div>
+            <div class="card-body" id="comparison-results">
+                <!-- This will be populated by JavaScript -->
+            </div>
+        </div>
+    </div> {% endcomment %}
+    <!-- Middle Grid Section -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Score</h4>
+            </div>
+            <div class="card-body">
+                {% include 'comparison_form.html' with form=form_compare form_id="form-compare" %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Address Form 2</h4>
+            </div>
+            <div class="card-body">
+                {% include 'address_form.html' with form=form2 form_id="form2" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <div class="row mt-4">
+    <div class="col-12">
+        <div id="comparison-results">
+            {% include 'comparison.html' with example_text1=example_text1 example_text2=example_text2 distance=distance operations=operations %}
+        </div>
+    </div>
+</div> {% endcomment %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0" data-toggle="collapse" href="#levenshteinInfo" role="button" aria-expanded="false" aria-controls="levenshteinInfo" style="cursor: pointer;">
+                    More Info: Levenshtein Distance <i class="fas fa-chevron-down float-right"></i>
+                </h4>
+            </div>
+            <div class="collapse" id="levenshteinInfo">
+                <div class="card-body">
+                    {% include 'explanation.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% comment %} </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function alignComparisonValues() {
+        // Get the first form card body
+        const firstFormCard = document.querySelector('.col-md-5:first-child .card-body');
+        
+        if (!firstFormCard) {
+            console.error('Could not find the first form card');
+            return;
+        }
+        
+        // Get all form-groups from the first form
+        const formGroups = firstFormCard.querySelectorAll('.form-group');
+        const comparisonContainer = document.querySelector('#comparison-results');
+        
+        if (!comparisonContainer) {
+            console.error('Could not find the comparison results container');
+            return;
+        }
+        
+        // Clear the container
+        comparisonContainer.innerHTML = '';
+        
+        // For each form field, create a comparison value aligned with the input
+        formGroups.forEach((formGroup, index) => {
+            const formInput = formGroup.querySelector('input, select, textarea');
+            if (!formInput) {
+                console.warn('Could not find input in form group', index);
+                return;
+            }
+            
+            // Get the label to calculate offset
+            const formLabel = formGroup.querySelector('label');
+            if (!formLabel) {
+                console.warn('Could not find label in form group', index);
+                return;
+            }
+            
+            // Create a wrapper div for positioning
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.style.position = 'relative';
+            wrapperDiv.style.height = formGroup.offsetHeight + 'px';
+            wrapperDiv.className = 'mb-3'; // Match Bootstrap's form-group margin
+            
+            // Create the value div aligned with the input
+            const valueDiv = document.createElement('div');
+            valueDiv.className = 'text-center';
+            valueDiv.textContent = '0.0';
+            valueDiv.style.position = 'absolute';
+            valueDiv.style.width = '100%';
+            
+            // Position the value div to align with the input
+            // Calculate the top position based on the label's height
+            valueDiv.style.top = formLabel.offsetHeight + 'px';
+            valueDiv.style.height = formInput.offsetHeight + 'px';
+            valueDiv.style.lineHeight = formInput.offsetHeight + 'px'; // Center text vertically
+            
+            // Append the value div to the wrapper
+            wrapperDiv.appendChild(valueDiv);
+            
+            // Append the wrapper to the comparison container
+            comparisonContainer.appendChild(wrapperDiv);
+        });
+        
+        console.log('Aligned comparison values with', formGroups.length, 'form fields');
+    }
+    
+    // Run the alignment when the page loads
+    setTimeout(alignComparisonValues, 500);
+    
+    // Re-align if the window is resized
+    window.addEventListener('resize', alignComparisonValues);
+    
+    // Also re-align when any HTMX request completes
+    document.body.addEventListener('htmx:afterSwap', function() {
+        setTimeout(alignComparisonValues, 100);
+    });
+});
+</script> {% endcomment %}
+{% endblock %}

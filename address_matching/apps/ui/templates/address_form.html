@@ -1,0 +1,18 @@
+<form hx-post="{% url 'field_update' %}"
+      hx-trigger="submit"
+      hx-target="#comparison-results"
+      hx-swap="innerHTML">
+
+    {% load bootstrap4 %}
+    {% bootstrap_form form %}
+
+   
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-danger" 
+                hx-post="{% url 'clear_form' form_id %}" 
+                hx-target="#{{ form_id }}-container" 
+                hx-swap="outerHTML">
+            Clear Form
+        </button>
+    </div>
+</form>

@@ -1,0 +1,45 @@
+{% load custom_filters %}
+
+<h4>What is Levenshtein Distance?</h4>
+<p>
+    The Levenshtein distance is a string metric for measuring the difference between two sequences.
+    It calculates the minimum number of single-character edits (insertions, deletions, or substitutions)
+    required to change one word into another.
+</p>
+
+<h5>Example:</h5>
+<p>
+    Comparing "<strong>{{ example_text1 }}</strong>" and "<strong>{{ example_text2 }}</strong>":
+</p>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item">
+        <strong>Levenshtein Distance:</strong> {{ distance }}
+    </li>
+    <li class="list-group-item">
+        <strong>Similarity Ratio:</strong> {{ example_text1|levenshtein_ratio:example_text2|floatformat:2|multiply:100 }}%
+    </li>
+</ul>
+
+<h5>Operations:</h5>
+<ul class="list-group">
+    {% for op in operations %}
+        <li class="list-group-item">{{ op }}</li>
+    {% empty %}
+        <li class="list-group-item">No operations (strings are identical)</li>
+    {% endfor %}
+</ul>
+
+<h5 class="mt-3">How it's calculated:</h5>
+<p>
+    The algorithm uses a dynamic programming approach to find the minimum number of operations.
+    For each position in both strings, it considers:
+</p>
+<ul>
+    <li>Insertion: Adding a character</li>
+    <li>Deletion: Removing a character</li>
+    <li>Substitution: Replacing a character with another</li>
+</ul>
+<p>
+    The similarity ratio is calculated as: 1 - (distance / max(len(s1), len(s2)))
+</p>

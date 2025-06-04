@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Parser with HTMX</title>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    {% csrf_token %}
+    <script>
+        // Add CSRF token to all HTMX requests
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('htmx:configRequest', function(evt) {
+                evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            });
+        });
+    </script>
+    <style>
+        .comparison-box {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .similarity-bar {
+            height: 20px;
+            background-color: #28a745;
+            border-radius: 3px;
+        }
+        .info-box {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        {% block content %}{% endblock %}
+    </div>
+    {% bootstrap_javascript jquery='full' %}
+</body>
+</html>
